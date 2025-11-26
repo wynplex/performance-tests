@@ -31,8 +31,3 @@ class UsersGatewayHTTPClient(HTTPClient):
 
     def create_user_api_request(self, request: CreateUserRequestDict) -> Response:
         return self.post("/api/v1/users", json=request)
-
-
-users_client = UsersGatewayHTTPClient(client=Client(base_url="http://localhost:8003"))
-response = users_client.get_user_api("dwadaw")
-print(response)
