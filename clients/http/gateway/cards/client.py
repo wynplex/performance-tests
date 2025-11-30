@@ -3,6 +3,8 @@ from typing import TypedDict
 from clients.http.client import HTTPClient
 from httpx import Response
 
+from clients.http.gateway.client import build_gateway_http_client
+
 
 class IssueCardRequestDict(TypedDict):
     userId: str
@@ -28,3 +30,6 @@ class CardsGatewayHTTPClient(HTTPClient):
         :return: Ответ от сервера (объект httpx.Response).
         """
         return self.post("/api/v1/cards/issue-physical-card", json=request)
+
+def build_cards_gateway_http_client() -> CardsGatewayHTTPClient:
+    return CardsGatewayHTTPClient(build_gateway_http_client())
