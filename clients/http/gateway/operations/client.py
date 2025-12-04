@@ -27,7 +27,6 @@ from clients.http.gateway.operations.schema import (
     GetOperationsQuerySchema,
     GetOperationsSummaryQuerySchema,
     MakeTransferOperationResponseSchema,
-    OperationStatus,
 )
 
 
@@ -186,8 +185,6 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :return: Словарь с созданной операцией.
         """
         request = MakeFeeOperationRequestSchema(
-            status=OperationStatus.COMPLETED,
-            amount=55.77,
             card_id=card_id,
             account_id=account_id
         )
@@ -203,8 +200,6 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :return: Словарь с созданной операцией.
         """
         request = MakeTopUpOperationRequestSchema(
-            status=OperationStatus.COMPLETED,
-            amount=1000.00,
             card_id=card_id,
             account_id=account_id
         )
@@ -220,8 +215,6 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :return: Словарь с созданной операцией.
         """
         request = MakeCashbackOperationRequestSchema(
-            status=OperationStatus.COMPLETED,
-            amount=25.50,
             card_id=card_id,
             account_id=account_id
         )
@@ -237,8 +230,6 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :return: Словарь с созданной операцией.
         """
         request = MakeTransferOperationRequestSchema(
-            status=OperationStatus.COMPLETED,
-            amount=500.00,
             card_id=card_id,
             account_id=account_id
         )
@@ -254,11 +245,9 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :return: Словарь с созданной операцией.
         """
         request = MakePurchaseOperationRequestSchema(
-            status=OperationStatus.COMPLETED,
-            amount=299.99,
             card_id=card_id,
             account_id=account_id,
-            category="GROCERY"
+            category=...
         )
         response = self.make_purchase_operation_api(request)
         return MakePurchaseOperationResponseSchema.model_validate_json(response.text)
@@ -272,8 +261,6 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :return: Словарь с созданной операцией.
         """
         request = MakeBillPaymentOperationRequestSchema(
-            status=OperationStatus.COMPLETED,
-            amount=150.00,
             card_id=card_id,
             account_id=account_id
         )
@@ -289,8 +276,6 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :return: Словарь с созданной операцией.
         """
         request = MakeCashWithdrawalOperationRequestSchema(
-            status=OperationStatus.COMPLETED,
-            amount=200.00,
             card_id=card_id,
             account_id=account_id
         )
