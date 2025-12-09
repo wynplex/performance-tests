@@ -3,7 +3,7 @@ from clients.grpc.gateway.accounts.client import build_accounts_gateway_grpc_cli
 from clients.grpc.gateway.documents.client import build_documents_gateway_grpc_client
 from clients.grpc.gateway.users.client import build_users_gateway_grpc_client
 
-# Создаём API-клиенты для работы с сервисами Users, Accounts и Cards
+# Создаём API-клиенты для работы с сервисами Users, Accounts и Documents
 users_gateway_client = build_users_gateway_grpc_client()
 accounts_gateway_client = build_accounts_gateway_grpc_client()
 documents_gateway_client = build_documents_gateway_grpc_client()
