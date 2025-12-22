@@ -1,8 +1,9 @@
 from httpx import QueryParams, Response
+from locust.env import Environment
 
 from clients.http.client import HTTPClient
 from clients.http.client import HTTPClientExtensions
-from clients.http.gateway.client import build_gateway_http_client
+from clients.http.gateway.client import build_gateway_http_client, build_gateway_locust_http_client
 from clients.http.gateway.operations.schema import (GetOperationReceiptResponseSchema, GetOperationResponseSchema,
                                                     GetOperationsQuerySchema, GetOperationsResponseSchema,
                                                     GetOperationsSummaryQuerySchema, GetOperationsSummaryResponseSchema,
@@ -283,3 +284,15 @@ class OperationsGatewayHTTPClient(HTTPClient):
 
 def build_operations_gateway_http_client() -> OperationsGatewayHTTPClient:
     return OperationsGatewayHTTPClient(build_gateway_http_client())
+
+def build_operations_gateway_locust_http_client(environment: Environment) -> OperationsGatewayHTTPClient:
+    """
+    Функция создаёт экземпляр OperationsGatewayHTTPClient адаптированного под Locust.
+
+    Клиент автоматически собирает метрики и передаёт их в Locust через хуки.
+    Используется исключительно в нагрузочных тестах.
+
+    :param environment: объект окружения Locust.
+    :return: экземпляр OperationsGatewayHTTPClient с хуками сбора метрик.
+    """
+    return OperationsGatewayHTTPClient(build_gateway_locust_http_client(environment))
