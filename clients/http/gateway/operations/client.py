@@ -1,33 +1,22 @@
-from httpx import Response, QueryParams
-
-from clients.http.client import HTTPClient
-from clients.http.gateway.client import build_gateway_http_client
 from httpx import QueryParams, Response
 
 from clients.http.client import HTTPClient
+from clients.http.client import HTTPClientExtensions
 from clients.http.gateway.client import build_gateway_http_client
-from clients.http.gateway.operations.schema import (
-    GetOperationReceiptResponseSchema,
-    GetOperationResponseSchema,
-    GetOperationsResponseSchema,
-    GetOperationsSummaryResponseSchema,
-    MakeBillPaymentOperationRequestSchema,
-    MakeBillPaymentOperationResponseSchema,
-    MakeCashWithdrawalOperationRequestSchema,
-    MakeCashWithdrawalOperationResponseSchema,
-    MakeCashbackOperationRequestSchema,
-    MakeCashbackOperationResponseSchema,
-    MakeFeeOperationRequestSchema,
-    MakeFeeOperationResponseSchema,
-    MakePurchaseOperationRequestSchema,
-    MakePurchaseOperationResponseSchema,
-    MakeTopUpOperationRequestSchema,
-    MakeTopUpOperationResponseSchema,
-    MakeTransferOperationRequestSchema,
-    GetOperationsQuerySchema,
-    GetOperationsSummaryQuerySchema,
-    MakeTransferOperationResponseSchema,
-)
+from clients.http.gateway.operations.schema import (GetOperationReceiptResponseSchema, GetOperationResponseSchema,
+                                                    GetOperationsQuerySchema, GetOperationsResponseSchema,
+                                                    GetOperationsSummaryQuerySchema, GetOperationsSummaryResponseSchema,
+                                                    MakeBillPaymentOperationRequestSchema,
+                                                    MakeBillPaymentOperationResponseSchema,
+                                                    MakeCashWithdrawalOperationRequestSchema,
+                                                    MakeCashWithdrawalOperationResponseSchema,
+                                                    MakeCashbackOperationRequestSchema,
+                                                    MakeCashbackOperationResponseSchema, MakeFeeOperationRequestSchema,
+                                                    MakeFeeOperationResponseSchema, MakePurchaseOperationRequestSchema,
+                                                    MakePurchaseOperationResponseSchema,
+                                                    MakeTopUpOperationRequestSchema, MakeTopUpOperationResponseSchema,
+                                                    MakeTransferOperationRequestSchema,
+                                                    MakeTransferOperationResponseSchema)
 
 
 class OperationsGatewayHTTPClient(HTTPClient):
@@ -42,7 +31,9 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :param operation_id: Идентификатор операции.
         :return: Объект httpx.Response с деталями операции.
         """
-        return self.get(f"/api/v1/operations/{operation_id}")
+        return self.get(f"/api/v1/operations/{operation_id}",
+                        extentions=HTTPClientExtensions(
+                            route="/api/v1/operations/{operation_id}"))
 
     def get_operation_receipt_api(self, operation_id: str) -> Response:
         """
@@ -51,7 +42,9 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :param operation_id: Идентификатор операции.
         :return: Объект httpx.Response с данными чека.
         """
-        return self.get(f"/api/v1/operations/operation-receipt/{operation_id}")
+        return self.get(f"/api/v1/operations/operation-receipt/{operation_id}",
+                        extentions=HTTPClientExtensions(
+                            route="/api/v1/operations/operation-receipt/{operation_id}"))
 
     def get_operations_api(self, query: GetOperationsQuerySchema) -> Response:
         """
@@ -60,7 +53,9 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :param query: Словарь с параметрами запроса, например: {'account_id': '123'}.
         :return: Объект httpx.Response со списком операций.
         """
-        return self.get("/api/v1/operations", params=QueryParams(**query.model_dump(by_alias=True)))
+        return self.get("/api/v1/operations", params=QueryParams(**query.model_dump(by_alias=True)),
+                        extentions=HTTPClientExtensions(
+                            route="/api/v1/operations"))
 
     def get_operations_summary_api(self, query: GetOperationsSummaryQuerySchema) -> Response:
         """
@@ -69,7 +64,9 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :param query: Словарь с параметрами запроса, например: {'account_id': '123'}.
         :return: Объект httpx.Response со сводной информацией.
         """
-        return self.get("/api/v1/operations/operations-summary", params=QueryParams(**query.model_dump(by_alias=True)))
+        return self.get("/api/v1/operations/operations-summary", params=QueryParams(**query.model_dump(by_alias=True)),
+                        extentions=HTTPClientExtensions(
+                            route="/api/v1/operations/operations-summary"))
 
     def make_fee_operation_api(self, body: MakeFeeOperationRequestSchema) -> Response:
         """
@@ -267,7 +264,8 @@ class OperationsGatewayHTTPClient(HTTPClient):
         response = self.make_bill_payment_operation_api(request)
         return MakeBillPaymentOperationResponseSchema.model_validate_json(response.text)
 
-    def make_cash_withdrawal_operation(self, card_id: str, account_id: str) -> MakeCashWithdrawalOperationResponseSchema:
+    def make_cash_withdrawal_operation(self, card_id: str,
+                                       account_id: str) -> MakeCashWithdrawalOperationResponseSchema:
         """
         Создать операцию снятия наличных.
 
