@@ -1,23 +1,30 @@
-from locust import HttpUser, between, task
+from locust import User, between, task
 
-from tools.fakers import fake
+from clients.http.gateway.accounts.client import AccountsGatewayHTTPClient, build_accounts_gateway_locust_http_client
+from clients.http.gateway.users.client import UsersGatewayHTTPClient, build_users_gateway_locust_http_client
+from pydantic_create_user import CreateUserResponseSchema
 
 
-class OpenDebitCardAccountScenarioUser(HttpUser):
-    wait_time = between(1,3)
-    user_id: str
+class OpenDebitCardAccountScenarioUser(User):
+    host = "http://localhost:8003"
+    wait_time = between(1, 3)
+
+    users_gateway_client: UsersGatewayHTTPClient
+    accounts_gateway_client: AccountsGatewayHTTPClient
+    create_user_response: CreateUserResponseSchema
 
     def on_start(self) -> None:
-        request = {
-            "email": fake.email(),
-            "lastName": fake.last_name(),
-            "firstName": fake.first_name(),
-            "middleName": fake.middle_name(),
-            "phoneNumber": fake.phone_number()
-        }
-        create_user_response = self.client.post("/api/v1/users", json = request)
-        self.user_id = create_user_response.json()["user"]["id"]
+        """
+                Метод on_start вызывается один раз при запуске каждой сессии виртуального пользователя.
+                Здесь мы создаем нового пользователя, отправляя POST-запрос к /api/v1/users.
+                """
+        # Шаг 1: создаем API клиент, встроенный в экосистему Locust (с хуками и поддержкой сбора метрик)
+        self.users_gateway_client = build_users_gateway_locust_http_client(self.environment)
+        self.accounts_gateway_client = build_accounts_gateway_locust_http_client(self.environment)
+
+        # Шаг 2: создаем пользователя через API
+        self.create_user_response = self.users_gateway_client.create_user()
 
     @task
     def open_debit_card(self):
-        self.client.post("/api/v1/accounts/open-debit-card-account", json = {"userId": self.user_id})
+        self.accounts_gateway_client.open_debit_card_account(self.create_user_response.user.id)
